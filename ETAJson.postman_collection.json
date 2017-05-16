@@ -1,0 +1,45 @@
+{
+	"variables": [],
+	"info": {
+		"name": "ETAJson",
+		"_postman_id": "7cbf837d-31e2-b73c-291d-a376726c2370",
+		"description": "ETA json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://ec2-204-236-211-33.compute-1.amazonaws.com:8080/companies/1/routes/1/Northbound/weekday/1/stops",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Body has stopID\"] = responseBody.has(\"stopID\");",
+							"tests[\"Body has stopName\"] = responseBody.has(\"stopName\");",
+							"tests[\"Body has latitude\"] = responseBody.has(\"latitude\");",
+							"tests[\"Body has longitude\"] = responseBody.has(\"longitude\");",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"The first stopID equals String 22362\"] = jsonData[0].stopID === \"22362\";",
+							"tests[\"The first stopNAme equals String METRO AIRPORT MCNAMARA TERMINAL\"] = jsonData[0].stopName === \"METRO AIRPORT MCNAMARA TERMINAL\";",
+							"tests[\"The first order equals String 1\"] = jsonData[0].order === 1;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://ec2-204-236-211-33.compute-1.amazonaws.com:8080/companies/1/routes/1/Northbound/weekday/1/stops",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"My first blog post :)\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
