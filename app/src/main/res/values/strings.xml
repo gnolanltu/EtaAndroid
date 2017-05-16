@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">EtaAndroidMock</string>
+    <string-array name="busnames">
+        <item>SmartBus</item>
+        <item>DDOT</item>
+        <item>Reflex</item>
+    </string-array>
+</resources>
