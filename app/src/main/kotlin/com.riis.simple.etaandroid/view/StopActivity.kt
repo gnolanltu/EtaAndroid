@@ -6,10 +6,10 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.ToggleButton
-import com.riis.simple.etaandroid.controllers.StopsController
+import com.riis.simple.etaandroid.presenter.StopPresenterImpl
+import com.riis.simple.etaandroid.view.interfaces.StopView
 
-class StopActivity : AppCompatActivity() {
-
+class StopActivity : AppCompatActivity(), StopView {
     companion object {
         val EXTRA_COMPANY = "company"
         val EXTRA_ROUTEID = "routeId"
@@ -18,7 +18,6 @@ class StopActivity : AppCompatActivity() {
     }
 
     private var routeId: Long? = null
-    private var currentDirection: String? = null
     private var direction1: String? = null
     private var direction2: String? = null
     private var daysActive: String? = null
@@ -66,10 +65,8 @@ class StopActivity : AppCompatActivity() {
             }
         }
 
-        currentDirection = direction1
-
-        val controller = StopsController(this)
-        controller.getStops(companyNumber, routeId!!.toString(), currentDirection!!, daysActive!!)
+        val presenter = StopPresenterImpl(this)
+        presenter.getStops(companyNumber, routeId!!.toString(), direction1!!, daysActive!!)
 
         val directionButton = findViewById(com.riis.simple.etaandroid.R.id.directionButton) as ToggleButton
         directionButton.textOff = direction1
@@ -78,16 +75,14 @@ class StopActivity : AppCompatActivity() {
 
         directionButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                currentDirection = direction2
+                presenter.getStops(companyNumber, routeId!!.toString(), direction2!!, daysActive!!)
             } else {
-                currentDirection = direction1
+                presenter.getStops(companyNumber, routeId!!.toString(), direction1!!, daysActive!!)
             }
-
-            controller.getStops(companyNumber, routeId!!.toString(), currentDirection!!, daysActive!!)
         }
     }
 
-    fun showProgressDialog() {
+    override fun showProgressDialog() {
         if (progressDialog == null) {
             progressDialog = ProgressDialog(this)
             progressDialog!!.setTitle("Loading Stops")
@@ -97,7 +92,7 @@ class StopActivity : AppCompatActivity() {
         progressDialog!!.show()
     }
 
-    fun loadStops(stopsResultList: List<String>) {
+    override fun loadStops(stopsResultList: List<String>) {
         if (progressDialog!!.isShowing) {
             progressDialog!!.dismiss()
         }

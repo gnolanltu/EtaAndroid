@@ -1,23 +1,23 @@
 package com.riis.simple.etaandroid.model
 
 import android.os.AsyncTask
-import com.riis.simple.etaandroid.callback.GetRoutesCallback
 import com.riis.simple.etaandroid.model.api.JsonFetcher
 import com.riis.simple.etaandroid.model.api.JsonParser
 import com.riis.simple.etaandroid.model.api.UrlStringBuilder
+import com.riis.simple.etaandroid.presenter.interfaces.RoutePresenter
 import org.json.JSONException
 import java.io.FileNotFoundException
 import java.util.*
 
-class RouteModel(val callback: GetRoutesCallback) {
+class RouteModel(val presenter: RoutePresenter) {
     fun getCompanyRoutes(companyNumber: Int) {
-        GetRoutesAsyncTask(callback).execute(companyNumber)
+        GetRoutesAsyncTask(presenter).execute(companyNumber)
     }
 
-    private inner class GetRoutesAsyncTask(val callback: GetRoutesCallback) : AsyncTask<Int, Void, List<Route>>() {
+    private inner class GetRoutesAsyncTask(val presenter: RoutePresenter) : AsyncTask<Int, Void, List<Route>>() {
         override fun onPreExecute() {
             super.onPreExecute()
-            callback.onStart()
+            presenter.onWebCallStart()
         }
 
         override fun doInBackground(vararg params: Int?): List<Route>? {
@@ -37,7 +37,7 @@ class RouteModel(val callback: GetRoutesCallback) {
 
         override fun onPostExecute(result: List<Route>) {
             super.onPostExecute(result)
-            callback.onComplete(result)
+            presenter.onWebCallComplete(result)
         }
     }
 }

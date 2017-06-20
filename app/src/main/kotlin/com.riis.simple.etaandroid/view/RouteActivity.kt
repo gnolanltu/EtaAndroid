@@ -8,11 +8,12 @@ import android.widget.AdapterView
 import android.widget.ListView
 import com.riis.simple.etaandroid.R
 import com.riis.simple.etaandroid.adapters.RoutesAdapter
-import com.riis.simple.etaandroid.controllers.RoutesController
 import com.riis.simple.etaandroid.model.Route
+import com.riis.simple.etaandroid.presenter.RoutePresenterImpl
+import com.riis.simple.etaandroid.presenter.interfaces.RoutePresenter
+import com.riis.simple.etaandroid.view.interfaces.RouteView
 
-class RouteActivity : AppCompatActivity() {
-
+class RouteActivity : AppCompatActivity(), RouteView {
     companion object {
         val EXTRA_COMPANY = "company"
     }
@@ -20,30 +21,25 @@ class RouteActivity : AppCompatActivity() {
     private var routeList: ListView? = null
     private var progressDialog: ProgressDialog? = null
 
-    private var controller: RoutesController = RoutesController(this)
+    private var presenter: RoutePresenter = RoutePresenterImpl(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_route)
         val companyNumber = intent.getIntExtra(EXTRA_COMPANY, -1)
 
-        routeList = findViewById(R.id.routes) as ListView
+        routeList = findViewById(R.id.routes) as ListView?
 
-        controller.getRoutes(companyNumber)
+        presenter.getRoutes(companyNumber)
 
         routeList!!.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val route = routeList!!.adapter.getItem(position) as Route
 
-            val stopIntent = Intent(this@RouteActivity, StopActivity::class.java)
-            stopIntent.putExtra(StopActivity.EXTRA_COMPANY, route.companyId)
-            stopIntent.putExtra(StopActivity.EXTRA_ROUTEID, route.id)
-            stopIntent.putExtra(StopActivity.EXTRA_DIRECTION, route.direction1)
-            stopIntent.putExtra(StopActivity.EXTRA_DAYSACTIVE, route.daysActive)
-            startActivity(stopIntent)
+            presenter.onRouteRowClicked(route)
         }
     }
 
-    fun showProgressDialog() {
+    override fun showProgressDialog() {
         if (progressDialog == null) {
             progressDialog = ProgressDialog(this)
             progressDialog!!.setTitle("Loading Routes")
@@ -53,11 +49,20 @@ class RouteActivity : AppCompatActivity() {
         progressDialog!!.show()
     }
 
-    fun loadRoutes(routeResultList: List<Route>) {
+    override fun loadRoutes(routeResultList: List<Route>) {
         if (progressDialog!!.isShowing) {
             progressDialog!!.dismiss()
         }
 
         routeList!!.adapter = RoutesAdapter(this, routeResultList)
+    }
+
+    override fun navigateToStops(companyId: Int, routeId: Long, direction: String, daysActive: String) {
+        val stopIntent = Intent(this@RouteActivity, StopActivity::class.java)
+        stopIntent.putExtra(StopActivity.EXTRA_COMPANY, companyId)
+        stopIntent.putExtra(StopActivity.EXTRA_ROUTEID, routeId)
+        stopIntent.putExtra(StopActivity.EXTRA_DIRECTION, direction)
+        stopIntent.putExtra(StopActivity.EXTRA_DAYSACTIVE, daysActive)
+        startActivity(stopIntent)
     }
 }

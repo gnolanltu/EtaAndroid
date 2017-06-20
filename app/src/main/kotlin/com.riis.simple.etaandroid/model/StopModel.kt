@@ -1,24 +1,24 @@
 package com.riis.simple.etaandroid.model
 
 import android.os.AsyncTask
-import com.riis.simple.etaandroid.callback.GetStopsCallback
 import com.riis.simple.etaandroid.model.api.JsonFetcher
 import com.riis.simple.etaandroid.model.api.JsonParser
 import com.riis.simple.etaandroid.model.api.UrlStringBuilder
+import com.riis.simple.etaandroid.presenter.interfaces.StopPresenter
 import org.json.JSONException
 import java.io.FileNotFoundException
 import java.util.*
 
-class StopModel(val callback: GetStopsCallback) {
+class StopModel(val presenter: StopPresenter) {
     fun getStops(companyNumber: Int, routeId: String, direction: String, daysActive: String) {
-        GetStopsAsyncTask(companyNumber, callback).execute(routeId, direction, daysActive)
+        GetStopsAsyncTask(companyNumber, presenter).execute(routeId, direction, daysActive)
     }
 
-    private inner class GetStopsAsyncTask(val companyNumber: Int, val callback: GetStopsCallback)
+    private inner class GetStopsAsyncTask(val companyNumber: Int, val presenter: StopPresenter)
         : AsyncTask<String, Void, List<String>>() {
         override fun onPreExecute() {
             super.onPreExecute()
-            callback.onStart()
+            presenter.onWebCallStart()
         }
 
         override fun doInBackground(vararg params: String?): List<String> {
@@ -39,7 +39,7 @@ class StopModel(val callback: GetStopsCallback) {
 
         override fun onPostExecute(result: List<String>?) {
             super.onPostExecute(result)
-            callback.onComplete(result!!)
+            presenter.onWebCallComplete(result!!)
         }
     }
 }
