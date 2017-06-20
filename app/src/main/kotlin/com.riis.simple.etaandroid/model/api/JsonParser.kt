@@ -26,6 +26,7 @@ object JsonParser {
             route.daysActive = instance.getString("daysActive")
             route.direction1 = instance.getString("direction1")
             route.routeName = instance.getString("routeName")
+            route.companyId = instance.getInt("companyID")
 
             returnArray.add(route)
         }

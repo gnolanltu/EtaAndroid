@@ -23,7 +23,7 @@ class CompanyActivity : AppCompatActivity() {
         busListView.adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, busNamesArray)
 
         //Go to RouteActivity and pass company
-        busListView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+        busListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val intent = Intent(this@CompanyActivity, RouteActivity::class.java)
             intent.putExtra(RouteActivity.EXTRA_COMPANY, position + 1)
             startActivity(intent)

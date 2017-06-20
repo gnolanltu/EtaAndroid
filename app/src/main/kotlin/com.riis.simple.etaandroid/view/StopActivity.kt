@@ -17,14 +17,14 @@ class StopActivity : AppCompatActivity() {
         val EXTRA_DAYSACTIVE = "daysActive"
     }
 
-    private var routeId: String? = null
+    private var routeId: Long? = null
     private var currentDirection: String? = null
     private var direction1: String? = null
     private var direction2: String? = null
     private var daysActive: String? = null
 
     private var stopsListView: ListView? = null
-    private var progressDialog: ProgressDialog = ProgressDialog(this)
+    private var progressDialog: ProgressDialog? = null
     private var companyNumber: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +32,7 @@ class StopActivity : AppCompatActivity() {
         setContentView(com.riis.simple.etaandroid.R.layout.activity_stop)
 
         companyNumber = intent.getIntExtra(EXTRA_COMPANY, -1)
-        routeId = intent.getStringExtra(EXTRA_ROUTEID)
+        routeId = intent.getLongExtra(EXTRA_ROUTEID, -1)
         direction1 = intent.getStringExtra(EXTRA_DIRECTION)
         daysActive = intent.getStringExtra(EXTRA_DAYSACTIVE)
 
@@ -72,30 +72,34 @@ class StopActivity : AppCompatActivity() {
         directionButton.textOff = direction1
         directionButton.textOn = direction2
         directionButton.isChecked = false
-        directionButton.setOnCheckedChangeListener { buttonView, isChecked ->
+        directionButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 currentDirection = direction2
             } else {
                 currentDirection = direction1
             }
 
-            controller.getStops(companyNumber, routeId!!, currentDirection!!, daysActive!!)
+            controller.getStops(companyNumber, routeId!!.toString(), currentDirection!!, daysActive!!)
         }
 
         currentDirection = direction1
 
-        controller.getStops(companyNumber, routeId!!, currentDirection!!, daysActive!!)
+        controller.getStops(companyNumber, routeId!!.toString(), currentDirection!!, daysActive!!)
     }
 
     fun showProgressDialog() {
-        progressDialog.setTitle("Loading Routes")
-        progressDialog.setCancelable(false)
-        progressDialog.show()
+        if (progressDialog == null) {
+            progressDialog = ProgressDialog(this)
+            progressDialog!!.setTitle("Loading Stops")
+            progressDialog!!.setCancelable(false)
+        }
+
+        progressDialog!!.show()
     }
 
     fun loadStops(stopsResultList: List<String>) {
-        if (progressDialog.isShowing) {
-            progressDialog.dismiss()
+        if (progressDialog!!.isShowing) {
+            progressDialog!!.dismiss()
         }
 
         stopsListView!!.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, stopsResultList)

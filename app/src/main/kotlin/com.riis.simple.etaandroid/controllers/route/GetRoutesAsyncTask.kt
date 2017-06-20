@@ -5,6 +5,7 @@ import com.riis.simple.etaandroid.callback.GetRoutesCallback
 import com.riis.simple.etaandroid.model.Route
 import com.riis.simple.etaandroid.model.RouteModel
 import org.json.JSONException
+import java.io.FileNotFoundException
 import java.util.*
 
 class GetRoutesAsyncTask(val callback: GetRoutesCallback) : AsyncTask<Int, Void, List<Route>>() {
@@ -22,6 +23,8 @@ class GetRoutesAsyncTask(val callback: GetRoutesCallback) : AsyncTask<Int, Void,
             val routeModel = RouteModel()
             return routeModel.getCompanyRoutes(params[0] as Int)
         } catch (e: JSONException) {
+            return ArrayList()
+        } catch (e: FileNotFoundException) {
             return ArrayList()
         }
     }

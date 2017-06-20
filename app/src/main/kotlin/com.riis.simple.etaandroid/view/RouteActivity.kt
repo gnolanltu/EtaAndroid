@@ -17,7 +17,7 @@ class RouteActivity : AppCompatActivity() {
     }
 
     private var routeList: ListView? = null
-    private var progressDialog: ProgressDialog = ProgressDialog(this)
+    private var progressDialog: ProgressDialog? = null
 
     private var controller: RoutesController = RoutesController(this)
 
@@ -28,7 +28,7 @@ class RouteActivity : AppCompatActivity() {
 
         routeList = findViewById(com.riis.simple.etaandroid.R.id.routes) as ListView
 
-        routeList!!.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+        routeList!!.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val route = routeList!!.adapter.getItem(position) as Route
 
             val stopIntent = Intent(this@RouteActivity, StopActivity::class.java)
@@ -43,14 +43,18 @@ class RouteActivity : AppCompatActivity() {
     }
 
     fun showProgressDialog() {
-        progressDialog.setTitle("Loading Routes")
-        progressDialog.setCancelable(false)
-        progressDialog.show()
+        if (progressDialog == null) {
+            progressDialog = ProgressDialog(this)
+            progressDialog!!.setTitle("Loading Routes")
+            progressDialog!!.setCancelable(false)
+        }
+
+        progressDialog!!.show()
     }
 
     fun loadRoutes(routeResultList: List<Route>) {
-        if (progressDialog.isShowing) {
-            progressDialog.dismiss()
+        if (progressDialog!!.isShowing) {
+            progressDialog!!.dismiss()
         }
 
         routeList!!.adapter = RoutesAdapter(this, routeResultList)
