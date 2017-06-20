@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.ToggleButton
-import com.riis.simple.etaandroid.controllers.stop.StopsController
+import com.riis.simple.etaandroid.controllers.StopsController
 
 class StopActivity : AppCompatActivity() {
 
@@ -35,8 +35,6 @@ class StopActivity : AppCompatActivity() {
         routeId = intent.getLongExtra(EXTRA_ROUTEID, -1)
         direction1 = intent.getStringExtra(EXTRA_DIRECTION)
         daysActive = intent.getStringExtra(EXTRA_DAYSACTIVE)
-
-        val controller = StopsController(this)
 
         stopsListView = findViewById(com.riis.simple.etaandroid.R.id.stops) as ListView
 
@@ -68,10 +66,16 @@ class StopActivity : AppCompatActivity() {
             }
         }
 
+        currentDirection = direction1
+
+        val controller = StopsController(this)
+        controller.getStops(companyNumber, routeId!!.toString(), currentDirection!!, daysActive!!)
+
         val directionButton = findViewById(com.riis.simple.etaandroid.R.id.directionButton) as ToggleButton
         directionButton.textOff = direction1
         directionButton.textOn = direction2
         directionButton.isChecked = false
+
         directionButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 currentDirection = direction2
@@ -81,10 +85,6 @@ class StopActivity : AppCompatActivity() {
 
             controller.getStops(companyNumber, routeId!!.toString(), currentDirection!!, daysActive!!)
         }
-
-        currentDirection = direction1
-
-        controller.getStops(companyNumber, routeId!!.toString(), currentDirection!!, daysActive!!)
     }
 
     fun showProgressDialog() {

@@ -6,8 +6,9 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.AdapterView
 import android.widget.ListView
+import com.riis.simple.etaandroid.R
 import com.riis.simple.etaandroid.adapters.RoutesAdapter
-import com.riis.simple.etaandroid.controllers.route.RoutesController
+import com.riis.simple.etaandroid.controllers.RoutesController
 import com.riis.simple.etaandroid.model.Route
 
 class RouteActivity : AppCompatActivity() {
@@ -23,10 +24,12 @@ class RouteActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.riis.simple.etaandroid.R.layout.activity_route)
+        setContentView(R.layout.activity_route)
         val companyNumber = intent.getIntExtra(EXTRA_COMPANY, -1)
 
-        routeList = findViewById(com.riis.simple.etaandroid.R.id.routes) as ListView
+        routeList = findViewById(R.id.routes) as ListView
+
+        controller.getRoutes(companyNumber)
 
         routeList!!.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val route = routeList!!.adapter.getItem(position) as Route
@@ -38,8 +41,6 @@ class RouteActivity : AppCompatActivity() {
             stopIntent.putExtra(StopActivity.EXTRA_DAYSACTIVE, route.daysActive)
             startActivity(stopIntent)
         }
-
-        controller.getRoutes(companyNumber)
     }
 
     fun showProgressDialog() {
