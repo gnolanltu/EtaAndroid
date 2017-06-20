@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.riis.simple.etaandroid.RouteActivity" />
-        <activity android:name="com.riis.simple.etaandroid.StopActivity"></activity>
+        <activity android:name="com.riis.simple.etaandroid.StopActivity"/>
     </application>
 
 </manifest>
