@@ -1,5 +1,6 @@
-package com.riis.simple.etaandroid.adapters
+package com.riis.simple.etaandroid.view.adapters
 
+import android.R
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,7 @@ class RoutesAdapter(val context: Context, val routeList: List<Route>) : BaseAdap
 
         var rowView = convertView
         if (rowView == null) {
-            rowView = inflater.inflate(android.R.layout.simple_list_item_1, parent, false)
+            rowView = inflater.inflate(R.layout.simple_list_item_1, parent, false)
         }
 
         (rowView as TextView).text = routeList[position].routeId

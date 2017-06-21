@@ -1,6 +1,6 @@
 package com.riis.simple.etaandroid;
 
-import com.riis.simple.etaandroid.model.api.UrlStringBuilder;
+import com.riis.simple.etaandroid.model.UrlStringBuilder;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

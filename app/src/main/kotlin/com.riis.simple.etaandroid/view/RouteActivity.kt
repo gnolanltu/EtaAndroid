@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.AdapterView
 import android.widget.ListView
 import com.riis.simple.etaandroid.R
-import com.riis.simple.etaandroid.adapters.RoutesAdapter
+import com.riis.simple.etaandroid.view.adapters.RoutesAdapter
 import com.riis.simple.etaandroid.model.Route
 import com.riis.simple.etaandroid.presenter.RoutePresenterImpl
 import com.riis.simple.etaandroid.presenter.interfaces.RoutePresenter

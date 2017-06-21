@@ -1,14 +1,15 @@
-package com.riis.simple.etaandroid.model.api
+package com.riis.simple.etaandroid.presenter
 
 import com.riis.simple.etaandroid.model.Route
+import com.riis.simple.etaandroid.presenter.interfaces.JsonParserInterface
 import org.json.JSONArray
 import org.json.JSONException
 import java.util.*
 
-object JsonParser {
+object JsonParser : JsonParserInterface {
 
     @Throws(JSONException::class)
-    fun parseRoutes(jsonString: String): ArrayList<Route> {
+    override fun parseRoutes(jsonString: String): ArrayList<Route> {
         //Create jsonArray for routeIDs
         val routeID = JSONArray(jsonString)
 
@@ -35,7 +36,7 @@ object JsonParser {
     }
 
     @Throws(JSONException::class)
-    fun getStops(jsonString: String): ArrayList<String> {
+    override fun getStops(jsonString: String): ArrayList<String> {
         //Create jsonArray for routeIDs
         val stops = JSONArray(jsonString)
 

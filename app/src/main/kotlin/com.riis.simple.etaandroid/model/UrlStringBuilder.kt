@@ -1,4 +1,4 @@
-package com.riis.simple.etaandroid.model.api
+package com.riis.simple.etaandroid.model
 
 object UrlStringBuilder {
     fun getRoutesUrl(company: Int): String {
