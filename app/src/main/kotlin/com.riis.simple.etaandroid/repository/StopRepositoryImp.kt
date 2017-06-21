@@ -1,29 +1,22 @@
-package com.riis.simple.etaandroid.presenter
+package com.riis.simple.etaandroid.repository
 
 import android.os.AsyncTask
 import com.riis.simple.etaandroid.model.UrlStringBuilder
-import com.riis.simple.etaandroid.presenter.interfaces.JsonFetcherInterface
-import com.riis.simple.etaandroid.presenter.interfaces.JsonParserInterface
-import com.riis.simple.etaandroid.presenter.interfaces.StopPresenter
-import com.riis.simple.etaandroid.view.interfaces.StopView
+import com.riis.simple.etaandroid.repository.interfaces.JsonFetcherInterface
+import com.riis.simple.etaandroid.repository.interfaces.JsonParserInterface
+import com.riis.simple.etaandroid.repository.interfaces.StopRepository
+import com.riis.simple.etaandroid.viewmodel.interfaces.StopViewModelInterface
 import org.json.JSONException
 import java.io.FileNotFoundException
 import java.util.*
 
-class StopPresenterImpl(val view: StopView) : StopPresenter {
+class StopRepositoryImp(val viewModel: StopViewModelInterface) : StopRepository {
+
     override fun getStops(companyNumber: Int, routeId: String, direction: String, daysActive: String) {
-        GetStopsAsyncTask(companyNumber, this).execute(routeId, direction, daysActive)
+        GetStopsAsyncTask(companyNumber, viewModel).execute(routeId, direction, daysActive)
     }
 
-    override fun onWebCallStart() {
-        view.showProgressDialog()
-    }
-
-    override fun onWebCallComplete(stopsList: List<String>) {
-        view.loadStops(stopsList)
-    }
-
-    private inner class GetStopsAsyncTask(val companyNumber: Int, val presenter: StopPresenter)
+    private inner class GetStopsAsyncTask(val companyNumber: Int, val viewModel: StopViewModelInterface)
         : AsyncTask<String, Void, List<String>>() {
 
         private var fetcher: JsonFetcherInterface? = null
@@ -36,7 +29,7 @@ class StopPresenterImpl(val view: StopView) : StopPresenter {
 
         override fun onPreExecute() {
             super.onPreExecute()
-            presenter.onWebCallStart()
+            viewModel.onWebCallStart()
         }
 
         override fun doInBackground(vararg params: String?): List<String> {
@@ -57,7 +50,7 @@ class StopPresenterImpl(val view: StopView) : StopPresenter {
 
         override fun onPostExecute(result: List<String>?) {
             super.onPostExecute(result)
-            presenter.onWebCallComplete(result!!)
+            viewModel.onWebCallComplete(result!!)
         }
     }
 }

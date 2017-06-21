@@ -1,7 +1,7 @@
-package com.riis.simple.etaandroid.presenter
+package com.riis.simple.etaandroid.repository
 
 import com.riis.simple.etaandroid.model.Route
-import com.riis.simple.etaandroid.presenter.interfaces.JsonParserInterface
+import com.riis.simple.etaandroid.repository.interfaces.JsonParserInterface
 import org.json.JSONArray
 import org.json.JSONException
 import java.util.*

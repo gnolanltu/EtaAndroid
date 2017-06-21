@@ -1,4 +1,4 @@
-package com.riis.simple.etaandroid.presenter.interfaces
+package com.riis.simple.etaandroid.repository.interfaces
 
 interface JsonFetcherInterface {
     @Throws(Exception::class)

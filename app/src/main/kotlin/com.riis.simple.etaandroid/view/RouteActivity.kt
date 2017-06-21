@@ -1,19 +1,20 @@
 package com.riis.simple.etaandroid.view
 
 import android.app.ProgressDialog
+import android.arch.lifecycle.LifecycleActivity
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.widget.AdapterView
 import android.widget.ListView
 import com.riis.simple.etaandroid.R
-import com.riis.simple.etaandroid.view.adapters.RoutesAdapter
 import com.riis.simple.etaandroid.model.Route
-import com.riis.simple.etaandroid.presenter.RoutePresenterImpl
-import com.riis.simple.etaandroid.presenter.interfaces.RoutePresenter
+import com.riis.simple.etaandroid.view.adapters.RoutesAdapter
 import com.riis.simple.etaandroid.view.interfaces.RouteView
+import com.riis.simple.etaandroid.viewmodel.RouteViewModel
 
-class RouteActivity : AppCompatActivity(), RouteView {
+class RouteActivity : LifecycleActivity(), RouteView {
     companion object {
         val EXTRA_COMPANY = "company"
     }
@@ -21,7 +22,7 @@ class RouteActivity : AppCompatActivity(), RouteView {
     private var routeList: ListView? = null
     private var progressDialog: ProgressDialog? = null
 
-    private var presenter: RoutePresenter = RoutePresenterImpl(this)
+    private var viewModel: RouteViewModel?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,13 +31,29 @@ class RouteActivity : AppCompatActivity(), RouteView {
 
         routeList = findViewById(R.id.routes) as ListView?
 
-        presenter.getRoutes(companyNumber)
+        viewModel = ViewModelProviders.of(this).get(RouteViewModel::class.java)
+        viewModel!!.routeView = this
+        subscribe()
+
+        viewModel!!.getRoutes(companyNumber)
 
         routeList!!.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val route = routeList!!.adapter.getItem(position) as Route
 
-            presenter.onRouteRowClicked(route)
+            navigateToStops(route.companyId!!, route.id!!, route.direction1, route.daysActive)
         }
+    }
+
+    private fun subscribe() {
+        val routeListObserver = Observer<List<Route>> { routeResultList ->
+            if (progressDialog!!.isShowing) {
+                progressDialog!!.dismiss()
+            }
+
+            routeList!!.adapter = RoutesAdapter(this@RouteActivity, routeResultList!!)
+        }
+
+        viewModel!!.getRouteList().observe(this, routeListObserver)
     }
 
     override fun showProgressDialog() {
@@ -49,15 +66,7 @@ class RouteActivity : AppCompatActivity(), RouteView {
         progressDialog!!.show()
     }
 
-    override fun loadRoutes(routeResultList: List<Route>) {
-        if (progressDialog!!.isShowing) {
-            progressDialog!!.dismiss()
-        }
-
-        routeList!!.adapter = RoutesAdapter(this, routeResultList)
-    }
-
-    override fun navigateToStops(companyId: Int, routeId: Long, direction: String, daysActive: String) {
+    private fun navigateToStops(companyId: Int, routeId: Long, direction: String, daysActive: String) {
         val stopIntent = Intent(this@RouteActivity, StopActivity::class.java)
         stopIntent.putExtra(StopActivity.EXTRA_COMPANY, companyId)
         stopIntent.putExtra(StopActivity.EXTRA_ROUTEID, routeId)

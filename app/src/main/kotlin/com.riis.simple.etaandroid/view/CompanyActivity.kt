@@ -7,15 +7,11 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import com.riis.simple.etaandroid.R
-import com.riis.simple.etaandroid.presenter.CompanyPresenterImpl
-import com.riis.simple.etaandroid.view.interfaces.CompanyView
 
-class CompanyActivity : AppCompatActivity(), CompanyView {
+class CompanyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_company)
-
-        val presenter = CompanyPresenterImpl(this)
 
         val busListView: ListView = findViewById(com.riis.simple.etaandroid.R.id.busses) as ListView
         val busNamesArray = resources.getStringArray(R.array.busnames)
@@ -23,13 +19,9 @@ class CompanyActivity : AppCompatActivity(), CompanyView {
 
         //Go to RouteActivity and pass company
         busListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            presenter.onCompanyRowClicked(position)
+            val intent = Intent(this@CompanyActivity, RouteActivity::class.java)
+            intent.putExtra(RouteActivity.EXTRA_COMPANY, position + 1)
+            startActivity(intent)
         }
-    }
-
-    override fun navigateToRoutes(companyId: Int) {
-        val intent = Intent(this@CompanyActivity, RouteActivity::class.java)
-        intent.putExtra(RouteActivity.EXTRA_COMPANY, companyId)
-        startActivity(intent)
     }
 }

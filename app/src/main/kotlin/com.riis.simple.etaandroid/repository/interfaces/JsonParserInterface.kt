@@ -1,4 +1,4 @@
-package com.riis.simple.etaandroid.presenter.interfaces
+package com.riis.simple.etaandroid.repository.interfaces
 
 import com.riis.simple.etaandroid.model.Route
 import org.json.JSONException

@@ -1,15 +1,17 @@
 package com.riis.simple.etaandroid.view
 
 import android.app.ProgressDialog
+import android.arch.lifecycle.LifecycleActivity
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.ToggleButton
-import com.riis.simple.etaandroid.presenter.StopPresenterImpl
 import com.riis.simple.etaandroid.view.interfaces.StopView
+import com.riis.simple.etaandroid.viewmodel.StopViewModel
 
-class StopActivity : AppCompatActivity(), StopView {
+class StopActivity : LifecycleActivity(), StopView {
     companion object {
         val EXTRA_COMPANY = "company"
         val EXTRA_ROUTEID = "routeId"
@@ -25,6 +27,8 @@ class StopActivity : AppCompatActivity(), StopView {
     private var stopsListView: ListView? = null
     private var progressDialog: ProgressDialog? = null
     private var companyNumber: Int = 0
+
+    private var viewModel: StopViewModel?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,8 +69,11 @@ class StopActivity : AppCompatActivity(), StopView {
             }
         }
 
-        val presenter = StopPresenterImpl(this)
-        presenter.getStops(companyNumber, routeId!!.toString(), direction1!!, daysActive!!)
+        viewModel = ViewModelProviders.of(this).get(StopViewModel::class.java)
+        viewModel!!.view = this
+        subscribe()
+
+        viewModel!!.getStops(companyNumber, routeId!!.toString(), direction1!!, daysActive!!)
 
         val directionButton = findViewById(com.riis.simple.etaandroid.R.id.directionButton) as ToggleButton
         directionButton.textOff = direction1
@@ -75,9 +82,9 @@ class StopActivity : AppCompatActivity(), StopView {
 
         directionButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                presenter.getStops(companyNumber, routeId!!.toString(), direction2!!, daysActive!!)
+                viewModel!!.getStops(companyNumber, routeId!!.toString(), direction2!!, daysActive!!)
             } else {
-                presenter.getStops(companyNumber, routeId!!.toString(), direction1!!, daysActive!!)
+                viewModel!!.getStops(companyNumber, routeId!!.toString(), direction1!!, daysActive!!)
             }
         }
     }
@@ -92,11 +99,15 @@ class StopActivity : AppCompatActivity(), StopView {
         progressDialog!!.show()
     }
 
-    override fun loadStops(stopsResultList: List<String>) {
-        if (progressDialog!!.isShowing) {
-            progressDialog!!.dismiss()
+    private fun subscribe() {
+        val routeListObserver = Observer<List<String>> { stopList ->
+            if (progressDialog!!.isShowing) {
+                progressDialog!!.dismiss()
+            }
+
+            stopsListView!!.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, stopList)
         }
 
-        stopsListView!!.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, stopsResultList)
+        viewModel!!.getStopList().observe(this, routeListObserver)
     }
 }
