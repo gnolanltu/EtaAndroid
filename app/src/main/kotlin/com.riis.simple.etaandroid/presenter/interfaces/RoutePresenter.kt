@@ -6,5 +6,4 @@ interface RoutePresenter {
     fun getRoutes(companyNumber: Int)
     fun onWebCallStart()
     fun onWebCallComplete(routeList : List<Route>)
-    fun onRouteRowClicked(route: Route)
 }

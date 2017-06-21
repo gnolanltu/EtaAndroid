@@ -1,13 +1,16 @@
 package com.riis.simple.etaandroid.view
 
 import android.app.ProgressDialog
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.ArrayAdapter
-import android.widget.ListView
 import android.widget.ToggleButton
-import com.riis.simple.etaandroid.presenter.StopPresenterImpl
+import com.riis.simple.etaandroid.R
+import com.riis.simple.etaandroid.adapters.StopAdapter
+import com.riis.simple.etaandroid.databinding.ActivityStopBinding
 import com.riis.simple.etaandroid.view.interfaces.StopView
+import com.riis.simple.etaandroid.viewmodel.StopActivityViewModel
+
 
 class StopActivity : AppCompatActivity(), StopView {
     companion object {
@@ -17,31 +20,24 @@ class StopActivity : AppCompatActivity(), StopView {
         val EXTRA_DAYSACTIVE = "daysActive"
     }
 
-    private var routeId: Long? = null
     private var direction1: String? = null
     private var direction2: String? = null
-    private var daysActive: String? = null
 
-    private var stopsListView: ListView? = null
     private var progressDialog: ProgressDialog? = null
-    private var companyNumber: Int = 0
+
+    private var binding: ActivityStopBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.riis.simple.etaandroid.R.layout.activity_stop)
 
-        companyNumber = intent.getIntExtra(EXTRA_COMPANY, -1)
-        routeId = intent.getLongExtra(EXTRA_ROUTEID, -1)
+        val viewModel = StopActivityViewModel(intent, this)
+        binding = DataBindingUtil.setContentView<ActivityStopBinding>(this, R.layout.activity_stop)
+
+        binding!!.viewModel = viewModel
+
+        viewModel.onCheckChanged()
+
         direction1 = intent.getStringExtra(EXTRA_DIRECTION)
-        daysActive = intent.getStringExtra(EXTRA_DAYSACTIVE)
-
-        stopsListView = findViewById(com.riis.simple.etaandroid.R.id.stops) as ListView
-
-        //if daysActive has more than one value, grab first value
-        val commaIndex = daysActive!!.indexOf(",")
-        if (commaIndex != -1) {
-            daysActive = daysActive!!.substring(0, commaIndex)
-        }
 
         //Always show North or Eastbound first for consistency
         when (direction1!!.toLowerCase()) {
@@ -65,21 +61,10 @@ class StopActivity : AppCompatActivity(), StopView {
             }
         }
 
-        val presenter = StopPresenterImpl(this)
-        presenter.getStops(companyNumber, routeId!!.toString(), direction1!!, daysActive!!)
-
         val directionButton = findViewById(com.riis.simple.etaandroid.R.id.directionButton) as ToggleButton
         directionButton.textOff = direction1
         directionButton.textOn = direction2
         directionButton.isChecked = false
-
-        directionButton.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                presenter.getStops(companyNumber, routeId!!.toString(), direction2!!, daysActive!!)
-            } else {
-                presenter.getStops(companyNumber, routeId!!.toString(), direction1!!, daysActive!!)
-            }
-        }
     }
 
     override fun showProgressDialog() {
@@ -97,6 +82,6 @@ class StopActivity : AppCompatActivity(), StopView {
             progressDialog!!.dismiss()
         }
 
-        stopsListView!!.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, stopsResultList)
+        binding!!.stops.adapter = StopAdapter(stopsResultList)
     }
 }

@@ -1,10 +1,8 @@
 package com.riis.simple.etaandroid.view
 
 import android.app.ProgressDialog
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.AdapterView
 import android.widget.ListView
 import com.riis.simple.etaandroid.R
 import com.riis.simple.etaandroid.adapters.RoutesAdapter
@@ -31,12 +29,6 @@ class RouteActivity : AppCompatActivity(), RouteView {
         routeList = findViewById(R.id.routes) as ListView?
 
         presenter.getRoutes(companyNumber)
-
-        routeList!!.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            val route = routeList!!.adapter.getItem(position) as Route
-
-            presenter.onRouteRowClicked(route)
-        }
     }
 
     override fun showProgressDialog() {
@@ -54,15 +46,6 @@ class RouteActivity : AppCompatActivity(), RouteView {
             progressDialog!!.dismiss()
         }
 
-        routeList!!.adapter = RoutesAdapter(this, routeResultList)
-    }
-
-    override fun navigateToStops(companyId: Int, routeId: Long, direction: String, daysActive: String) {
-        val stopIntent = Intent(this@RouteActivity, StopActivity::class.java)
-        stopIntent.putExtra(StopActivity.EXTRA_COMPANY, companyId)
-        stopIntent.putExtra(StopActivity.EXTRA_ROUTEID, routeId)
-        stopIntent.putExtra(StopActivity.EXTRA_DIRECTION, direction)
-        stopIntent.putExtra(StopActivity.EXTRA_DAYSACTIVE, daysActive)
-        startActivity(stopIntent)
+        routeList!!.adapter = RoutesAdapter(routeResultList)
     }
 }

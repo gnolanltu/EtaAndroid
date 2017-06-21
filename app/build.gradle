@@ -49,9 +49,19 @@ android {
         }
     }
 
+    // Need this for databinding
+    dataBinding {
+        enabled = true;
+    }
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+}
+
+// Need this for kotlin databinding
+kapt {
+    generateStubs = true
 }
 
 dependencies {
@@ -64,6 +74,9 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.2-5"
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    // Need this for kotlin databinding (version matches android plugin in other build.gradle)
+    kapt "com.android.databinding:compiler:2.3.3"
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.json:json:20140107'

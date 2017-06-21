@@ -18,8 +18,4 @@ class RoutePresenterImpl(val view: RouteView) : RoutePresenter {
     override fun onWebCallComplete(routeList: List<Route>) {
         view.loadRoutes(routeList)
     }
-
-    override fun onRouteRowClicked(route: Route) {
-        view.navigateToStops(route.companyId!!, route.id!!, route.direction1, route.daysActive)
-    }
 }

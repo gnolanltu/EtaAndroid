@@ -6,37 +6,36 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.riis.simple.etaandroid.R
-import com.riis.simple.etaandroid.databinding.RouteListItemBinding
-import com.riis.simple.etaandroid.model.Route
-import com.riis.simple.etaandroid.viewmodel.RouteViewModel
+import com.riis.simple.etaandroid.databinding.StopListItemBinding
+import com.riis.simple.etaandroid.viewmodel.StopViewModel
 
-class RoutesAdapter(val routeList: List<Route>) : BaseAdapter() {
+class StopAdapter(val stopList: List<String>) : BaseAdapter() {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val binding: RouteListItemBinding
+        val binding: StopListItemBinding
         val rowView: View
         if (convertView == null) {
-            rowView = LayoutInflater.from(parent!!.context).inflate(R.layout.route_list_item, parent, false)
+            rowView = LayoutInflater.from(parent!!.context).inflate(R.layout.stop_list_item, parent, false)
             binding = DataBindingUtil.bind(rowView)
         } else {
             rowView = convertView
-            binding = DataBindingUtil.getBinding<RouteListItemBinding>(rowView)
+            binding = DataBindingUtil.getBinding<StopListItemBinding>(rowView)
         }
 
-        binding.viewModel = RouteViewModel(parent!!.context, routeList[position])
+        binding.viewModel = StopViewModel(stopList[position])
 
         return rowView
     }
 
     override fun getItem(position: Int): Any {
-        return routeList[position]
+        return stopList[position]
     }
 
     override fun getItemId(position: Int): Long {
-        return routeList[position].id!!
+        return 1
     }
 
     override fun getCount(): Int {
-        return routeList.count()
+        return stopList.count()
     }
 }
